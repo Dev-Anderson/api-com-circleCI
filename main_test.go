@@ -19,9 +19,9 @@ func SetUpRouter() *gin.Engine {
 }
 
 func Test_HomePage(t *testing.T) {
-	mockResponse := `{"message":"Api rodando"}`
+	mockResponse := `{"message":"API rodando"}`
 	r := SetUpRouter()
-	r.GET("/", HomePageHandeler)
+	r.GET("/", HomePage)
 	req, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -33,7 +33,7 @@ func Test_HomePage(t *testing.T) {
 
 func Test_CreateCompany(t *testing.T) {
 	r := SetUpRouter()
-	r.POST("/company", NewCompanyHandler)
+	r.POST("/company", NewCompany)
 	companyID := xid.New().String()
 	company := Company{
 		ID:      companyID,
@@ -51,7 +51,7 @@ func Test_CreateCompany(t *testing.T) {
 
 func Test_GetCompany(t *testing.T) {
 	r := SetUpRouter()
-	r.GET("/companies", GetCompaniesHandler)
+	r.GET("/companies", GetCompanies)
 	req, _ := http.NewRequest("GET", "/companies", nil)
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -65,7 +65,7 @@ func Test_GetCompany(t *testing.T) {
 
 func Test_UpdateCompany(t *testing.T) {
 	r := SetUpRouter()
-	r.PUT("/company/:id", UpdateCompanyHandler)
+	r.PUT("/company/:id", UpdateCompany)
 	company := Company{
 		ID:      `2`,
 		Name:    "Demo Company",

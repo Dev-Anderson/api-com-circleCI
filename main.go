@@ -1,10 +1,7 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
-	"github.com/rs/xid"
 )
 
 type Company struct {
@@ -21,81 +18,12 @@ var companies = []Company{
 	{ID: "4", Name: "Microsoft outro", CEO: "Satya Nadella asdf", Revenue: "30 million"},
 }
 
-func NewCompanyHandler(c *gin.Context) {
-	var newCompany Company
-	if err := c.ShouldBindJSON(&newCompany); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-
-	newCompany.ID = xid.New().String()
-	companies = append(companies, newCompany)
-	c.JSON(http.StatusCreated, newCompany)
-}
-
-func GetCompaniesHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, companies)
-}
-
-func HomePageHandeler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "Api rodando"})
-}
-
-func UpdateCompanyHandler(c *gin.Context) {
-	id := c.Param("id")
-	var company Company
-	if err := c.ShouldBindJSON(&company); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-		return
-	}
-	index := -1
-	for i := 0; i < len(companies); i++ {
-		if companies[i].ID == id {
-			index = 1
-		}
-	}
-	if index == -1 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Company not found",
-		})
-		return
-	}
-
-	companies[index] = company
-	c.JSON(http.StatusOK, company)
-}
-
-func DeleteCompanyHandeler(c *gin.Context) {
-	id := c.Param("id")
-	index := -1
-	for i := 0; i < len(companies); i++ {
-		if companies[i].ID == id {
-			index = 1
-		}
-	}
-	if index == -1 {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Company not found",
-		})
-		return
-	}
-
-	companies = append(companies[:index], companies[index+1:]...)
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Company has been deleted",
-	})
-}
-
 func main() {
 	router := gin.Default()
-	router.GET("/", HomePageHandeler)
-	router.GET("/companies", GetCompaniesHandler)
-	router.POST("/company", NewCompanyHandler)
-	router.PUT("/company/:id", UpdateCompanyHandler)
-	router.DELETE("/company/:id", DeleteCompanyHandeler)
+	router.GET("/", HomePage)
+	router.GET("/companies", GetCompanies)
+	router.POST("/company", NewCompany)
+	router.PUT("/company/:id", UpdateCompany)
+	router.DELETE("/company/:id", DeleteCompany)
 	router.Run()
 }
